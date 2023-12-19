@@ -3,6 +3,6 @@
 @tailwind utilities;
 
 #app {
-  margin: 0;
-  padding: 0;
+  @apply bg-slate-100;
+  font-family: 'FiraGO', sans-serif;
 }
