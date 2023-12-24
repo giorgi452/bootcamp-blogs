@@ -1,31 +1,25 @@
 <template>
   <div class="w-96">
-    <img src="../../assets/images/unsplash_01_igFr7hd4.png" alt="Buneba" class="rounded-xl" />
-    <h3 class="mt-2">ლილე კვარაცხელია</h3>
-    <span class="text-gray-400 font-light text-sm">02.11.2023</span>
-    <h1 class="text-xl">EOMM-ის მრჩეველთა საბჭოს ნინო ეგაძე შეუერთდა</h1>
+    <img
+      :src="props.data?.image"
+      :alt="props.data?.title"
+      class="rounded-xl w-[350px] h-[350px] object-cover"
+    />
+    <h3 class="mt-2">{{ props.data?.author }}</h3>
+    <span class="text-gray-400 font-light text-sm">{{ props.data?.publish_date }}</span>
+    <h1 class="text-xl">{{ props.data?.title }}</h1>
     <div class="flex items-center gap-2 flex-wrap py-2">
       <CategoryCard
-        name="მარკეტი"
-        color="text-yellow-500"
-        background="bg-yellow-300/30"
+        :name="item?.title"
+        :color="item?.text_color"
+        :background="item?.background_color"
         :active="false"
-      />
-      <CategoryCard
-        name="აპლიკაცია"
-        color="text-green-500"
-        background="bg-green-300/30"
-        :active="false"
-      />
-      <CategoryCard
-        name="ხელოვნური ინტელექი"
-        color="text-violet-500"
-        background="bg-violet-300/30"
-        :active="false"
+        v-for="(item, index) in props.data?.categories"
+        :key="index"
       />
     </div>
     <p class="text-gray-500">
-      6 თვის შემდეგ ყველის ბრმა დეგუსტაციის დროც დადგა. მაქსიმალური სიზუსტისთვის, ეს პროცესი...
+      {{ props.data?.description }}
     </p>
     <span class="flex items-center text-violet-500 mt-2"
       >სრულად ნახვა
@@ -47,6 +41,8 @@
 
 <script setup lang="ts">
 import CategoryCard from './Category.vue'
+
+const props = defineProps({ data: Object })
 </script>
 
 <script lang="ts">

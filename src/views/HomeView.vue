@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import CategoryCard from '../components/Cards/Category.vue'
 import BlogCard from '../components/Cards/Blog.vue'
+import { onMounted, ref } from 'vue'
+import axios from 'axios'
+import { useCategoriesStore } from '../stores/categories'
+
+const blogs = ref<any>(null)
+const catStore = useCategoriesStore()
+
+onMounted(() => {
+  axios.get('/api/blogs').then((response: any) => {
+    blogs.value = response.data
+  })
+})
 </script>
 
 <template>
@@ -10,43 +22,18 @@ import BlogCard from '../components/Cards/Blog.vue'
       <img src="../assets/images/Blog-1024x355.png" alt="Blog" class="h-64" />
     </div>
 
-    <div class="flex justify-center items-center gap-3">
+    <div class="flex justify-center items-center gap-3 overflow-scroll max-w-full min-w-full">
       <CategoryCard
-        name="მარკეტი"
-        color="text-yellow-500"
-        background="bg-yellow-300/30"
+        :name="item?.title"
+        :color="item?.text_color"
+        :background="item?.background_color"
         :active="false"
-      />
-      <CategoryCard
-        name="აპლიკაცია"
-        color="text-green-500"
-        background="bg-green-300/30"
-        :active="false"
-      />
-      <CategoryCard
-        name="ხელოვნური ინტელექი"
-        color="text-violet-500"
-        background="bg-violet-300/30"
-        :active="true"
-      />
-      <CategoryCard name="UI/UX" color="text-red-500" background="bg-red-300/30" :active="false" />
-      <CategoryCard
-        name="კვლევა"
-        color="text-lime-500"
-        background="bg-lime-300/30"
-        :active="true"
-      />
-      <CategoryCard
-        name="Figma"
-        color="text-emerald-500"
-        background="bg-emerald-300/30"
-        :active="false"
+        v-for="(item, index) in catStore.categories?.data"
+        :key="index"
       />
     </div>
     <div class="p-10 flex gap-20">
-      <BlogCard />
-      <BlogCard />
-      <BlogCard />
+      <BlogCard v-for="(item, index) in blogs?.data" :data="item" :key="index" />
     </div>
   </main>
 </template>

@@ -1,6 +1,8 @@
 <template>
   <div class="p-16 flex justify-center">
-    <button class="flex items-center justify-center bg-gray-300 w-10 h-10 rounded-full">
+    <button
+      class="flex items-center justify-center bg-gray-300 w-10 h-10 rounded-full absolute left-0 mx-10"
+    >
       <RouterLink to="/">
         <svg
           width="10"
@@ -20,9 +22,9 @@
       <!-- Add Blog -->
       <h1 class="text-3xl">ბლოგის დამატება</h1>
       <!-- Form -->
-      <form class="mt-5">
+      <form class="mt-5" @submit.prevent="handleSubmit" enctype="multipart/form-data">
         <!-- Image -->
-        <div>
+        <!-- <div>
           <label for="image">ატვირთეთ ფოტო</label>
           <div
             class="flex flex-col bg-violet-300/30 border border-dashed border-black items-center gap-10 justify-around px-56 py-16 mt-1 rounded"
@@ -46,9 +48,15 @@
                 />
               </svg>
             </div>
-            <input type="file" id="image" name="image" accept="image/*" />
+            <input type="file" id="image" name="image" accept="image/*" @change="onImageChange" />
           </div>
-        </div>
+        </div> -->
+        <v-file-input
+          clearable
+          label="File input"
+          variant="outlined"
+          @change="onImageChange"
+        ></v-file-input>
         <!-- Author and Title -->
         <div class="flex gap-2 mt-2 justify-between">
           <div>
@@ -57,7 +65,8 @@
               <input
                 type="text"
                 placeholder="შეიყვანეთ ავტორი"
-                class="p-2 rounded-xl border w-72 focus:outline-none focus:border-violet-500 focus:border-2"
+                v-model="author"
+                class="border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 id="author"
                 name="author"
               />
@@ -73,10 +82,11 @@
             <div class="mt-1">
               <input
                 type="text"
+                v-model="title"
                 placeholder="შეიყვანეთ სათაური"
                 id="title"
                 name="title"
-                class="p-2 rounded-xl border w-72 focus:outline-none focus:border-violet-500 focus:border-2"
+                class="border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
               <ul class="text-gray-400 mt-1">
                 <li>მინიმუმ 2 სიმბოლო</li>
@@ -90,9 +100,10 @@
           <textarea
             name="description"
             id="description"
+            v-model="description"
             cols="30"
             rows="10"
-            class="border rounded-xl p-2 mt-2"
+            class="border-2 w-full border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             placeholder="შეიყვანეთ აღწერა"
           ></textarea>
           <ul class="text-gray-400 mt-1">
@@ -100,32 +111,57 @@
           </ul>
         </div>
         <!-- Date and Categories -->
-        <div class="flex gap-2 mt-2 justify-between">
+        <div class="flex gap-2 mt-2 items-center justify-center">
           <div>
             <label for="date" class="mt-2">გამოქვეყნების თარიღი <i>*</i></label>
             <div class="mt-1">
               <input
                 type="date"
                 placeholder="შეიყვანეთ ავტორი"
-                class="p-2 rounded-xl border w-72 focus:outline-none focus:border-violet-500 focus:border-2"
+                class="border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 id="date"
                 name="date"
+                v-model="publishDate"
               />
             </div>
           </div>
           <div>
             <label for="category">კატეგორია <i>*</i></label>
             <div class="mt-1">
-              <select
-                name="category"
-                id="category"
-                class="p-2 rounded-xl border w-72 focus:outline-none focus:border-violet-500 focus:border-2 bg-white px-2"
+              <v-autocomplete
+                v-model="selectedCategories"
+                :disabled="isUpdating"
+                :items="catStore.categories?.data"
+                chips
+                closable-chips
+                color="blue-grey-lighten-2"
+                item-title="name"
+                item-value="name"
+                multiple
+                clearable
+                class="w-72 rounded-lg h-12"
+                variant="outlined"
+                :active="selectActive"
               >
-                <option value="IDK">idk</option>
-                <option value="YOKOSO">yokoso</option>
-                <option value="NIGGA">nigga</option>
-                <option value="NIGGER">nigger</option>
-              </select>
+                <template v-slot:chip="{ props, item }">
+                  <v-chip
+                    v-bind="props"
+                    :color="item.raw?.background_color"
+                    :text="item.raw?.title"
+                  ></v-chip>
+                </template>
+
+                <template v-slot:item="{ props, item }">
+                  <v-chip-group column>
+                    <v-chip
+                      v-bind="props"
+                      :text="item?.raw?.title"
+                      :color="item.raw?.background_color"
+                      class="bg-red-500 rounded-xl !text-sm"
+                    ></v-chip>
+                  </v-chip-group>
+                </template>
+              </v-autocomplete>
             </div>
           </div>
         </div>
@@ -138,12 +174,15 @@
               placeholder="Example@redberry.ge"
               id="mail"
               name="mail"
-              class="p-2 rounded-xl border w-72 focus:outline-none focus:border-violet-500 focus:border-2"
+              class="border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              v-model="email"
             />
           </div>
         </div>
         <!-- Submit button -->
-        <button type="submit" class="bg-gray-200 rounded py-2 px-10 mt-10">გამოქვეყნება</button>
+        <button type="submit" class="bg-gray-200 rounded-lg py-2 px-10 mt-10 ml-[70%]">
+          გამოქვეყნება
+        </button>
       </form>
     </div>
   </div>
@@ -151,4 +190,52 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { ref, watch } from 'vue'
+import { useCategoriesStore } from '../stores/categories'
+import axios from 'axios'
+
+const selectedCategories = ref()
+const isUpdating = ref(false)
+const catStore = useCategoriesStore()
+const title = ref()
+const author = ref()
+const description = ref()
+const publishDate = ref()
+const image = ref()
+const selectActive = ref(false)
+const email = ref()
+
+const titleRegexp = /^.{2,}$/
+const descriptionRegexp = /^.{2,}$/
+const authorRegexp = /^[ა-ჰ\s]{4,}(?:[.?!]\s*[ა-ჰ\s]{1,}){1,}$/
+
+function onImageChange(e: any) {
+  image.value = e.target.files[0]
+}
+
+let timeout: number | any = -1
+watch(isUpdating, (val) => {
+  clearTimeout(timeout)
+  if (val) {
+    timeout = setTimeout(() => (isUpdating.value = false), 3000)
+  }
+})
+
+function handleSubmit() {
+  const formData = new FormData()
+
+  formData.append('title', title.value)
+  formData.append('image', image.value)
+  formData.append('author', author.value)
+  formData.append('description', description.value)
+  formData.append('publish_date', publishDate.value)
+  formData.append('email', email.value)
+  formData.append('categories', JSON.stringify(selectedCategories.value.map((el: any) => el.id)))
+
+  axios.post('/api/blogs', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
 </script>

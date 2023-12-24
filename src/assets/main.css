@@ -6,3 +6,32 @@
   @apply bg-slate-100;
   font-family: 'FiraGO', sans-serif;
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.v-field__input {
+  min-height: 50px !important;
+  max-height: 50px;
+  overflow-x: scroll;
+  flex-wrap: nowrap !important;
+  overflow-y: hidden;
+}
