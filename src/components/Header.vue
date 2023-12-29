@@ -1,5 +1,5 @@
 <template>
-  <nav class="p-3 border bg-white flex justify-between px-10 items-center">
+  <nav class="p-3 border bg-white flex justify-between px-10 items-center fixed w-full">
     <RouterLink to="/"> <img src="../assets/images/LOGO-02.png" alt="Redberry" /></RouterLink>
     <LoginModal />
   </nav>

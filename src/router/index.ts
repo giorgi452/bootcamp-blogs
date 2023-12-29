@@ -13,6 +13,11 @@ const router = createRouter({
       path: '/add-blog',
       name: 'AddBlog',
       component: () => import('../views/AddBlogView.vue')
+    },
+    {
+      path: '/inner/:id',
+      name: 'Inner',
+      component: () => import('../views/InnerView.vue')
     }
   ]
 })

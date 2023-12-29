@@ -1,9 +1,9 @@
 <template>
-  <div class="w-96">
+  <div class="w-[350px]">
     <img
       :src="props.data?.image"
       :alt="props.data?.title"
-      class="rounded-xl w-[350px] h-[350px] object-cover"
+      class="rounded-xl w-full h-[350px] object-cover"
     />
     <h3 class="mt-2">{{ props.data?.author }}</h3>
     <span class="text-gray-400 font-light text-sm">{{ props.data?.publish_date }}</span>
@@ -19,9 +19,15 @@
       />
     </div>
     <p class="text-gray-500">
-      {{ props.data?.description }}
+      {{
+        props.data?.description.length > 50
+          ? props.data?.description.substring(0, 50) + '...'
+          : props.data?.description
+      }}
     </p>
-    <span class="flex items-center text-violet-500 mt-2"
+    <span
+      class="flex items-center text-violet-500 mt-2 cursor-pointer"
+      @click="router.push(`/inner/${props.data?.id}`)"
       >სრულად ნახვა
       <svg
         width="20"
@@ -41,7 +47,9 @@
 
 <script setup lang="ts">
 import CategoryCard from './Category.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const props = defineProps({ data: Object })
 </script>
 

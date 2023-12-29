@@ -24,10 +24,19 @@
       <!-- Form -->
       <form class="mt-5" @submit.prevent="handleSubmit" enctype="multipart/form-data">
         <!-- Image -->
-        <!-- <div>
-          <label for="image">ატვირთეთ ფოტო</label>
-          <div
-            class="flex flex-col bg-violet-300/30 border border-dashed border-black items-center gap-10 justify-around px-56 py-16 mt-1 rounded"
+        <div>
+          <label>ატვირთეთ ფოტო</label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            @change="onImageChange"
+            class="hidden"
+          />
+          <label
+            class="flex flex-col bg-violet-300/30 border border-dashed border-black items-center gap-10 justify-around px-56 py-16 mt-1 rounded-lg"
+            for="image"
           >
             <div class="flex-1">
               <svg
@@ -48,15 +57,13 @@
                 />
               </svg>
             </div>
-            <input type="file" id="image" name="image" accept="image/*" @change="onImageChange" />
-          </div>
-        </div> -->
-        <v-file-input
-          clearable
-          label="File input"
-          variant="outlined"
-          @change="onImageChange"
-        ></v-file-input>
+
+            <p class="font-normal">
+              ჩააგდეთ ფაილი აქ ან <span class="font-bold underline">აირჩიეთ ფაილი</span>
+            </p>
+          </label>
+        </div>
+
         <!-- Author and Title -->
         <div class="flex gap-2 mt-2 justify-between">
           <div>
@@ -66,14 +73,42 @@
                 type="text"
                 placeholder="შეიყვანეთ ავტორი"
                 v-model="author"
-                class="border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="`border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm ${
+                  author1 === 0 ? 'bg-red-500/30 border-red-500' : ''
+                } ${author1 === 1 ? 'text-gray-500 bg-white' : ''} ${
+                  author1 === 2 ? 'bg-green-500/30 border-green-500' : ''
+                } ${author2 === 0 ? ' bg-red-500/30 border-red-500' : ''} ${
+                  author2 === 1 ? 'text-gray-400 bg-white ' : ''
+                } ${author2 === 2 ? ' bg-green-500/30 border-green-500' : ''}${
+                  author3 === 0 ? ' bg-red-500/30 border-red-500' : ''
+                } ${author3 === 1 ? 'text-gray-400 bg-white' : ''} ${
+                  author3 === 2 ? ' bg-green-500/30 border-green-500' : ''
+                }`"
                 id="author"
                 name="author"
               />
               <ul class="text-gray-400 list-disc ml-5 mt-1">
-                <li>მინიმუმ 4 სიმბოლო</li>
-                <li>მინიმუმ ორი სიტყვა</li>
-                <li>მხოლოდ ქართული სიმბოლოები</li>
+                <li
+                  :class="`${author1 === 0 ? ' text-red-500' : ''} ${
+                    author1 === 1 ? 'text-gray-400 ' : ''
+                  } ${author1 === 2 ? 'text-green-500 ' : ''}`"
+                >
+                  მხოლოდ ქართული სიმბოლოები
+                </li>
+                <li
+                  :class="`${author2 === 0 ? ' text-red-500' : ''} ${
+                    author2 === 1 ? 'text-gray-400 ' : ''
+                  } ${author2 === 2 ? ' text-green-500' : ''}`"
+                >
+                  მინიმუმ 4 სიმბოლო
+                </li>
+                <li
+                  :class="`${author3 === 0 ? ' text-red-500' : ''} ${
+                    author3 === 1 ? 'text-gray-400 ' : ''
+                  } ${author3 === 2 ? ' text-green-500' : ''}`"
+                >
+                  მინიმუმ ორი სიტყვა
+                </li>
               </ul>
             </div>
           </div>
@@ -86,10 +121,20 @@
                 placeholder="შეიყვანეთ სათაური"
                 id="title"
                 name="title"
-                class="border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="`border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm ${
+                  title1 === 0 ? ' bg-red-500/30 border-red-500' : ''
+                } ${title1 === 1 ? 'text-gray-400 bg-white' : ''} ${
+                  title1 === 2 ? ' bg-green-500/30 border-green-500' : ''
+                }`"
               />
               <ul class="text-gray-400 mt-1">
-                <li>მინიმუმ 2 სიმბოლო</li>
+                <li
+                  :class="`${title1 === 0 ? ' text-red-500' : ''} ${
+                    title1 === 1 ? 'text-gray-400 ' : ''
+                  } ${title1 === 2 ? ' text-green-500' : ''}`"
+                >
+                  მინიმუმ 2 სიმბოლო
+                </li>
               </ul>
             </div>
           </div>
@@ -103,22 +148,34 @@
             v-model="description"
             cols="30"
             rows="10"
-            class="border-2 w-full border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            :class="`border-2 w-full border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm ${
+              description1 === 0 ? ' bg-red-500/30 border-red-500' : ''
+            } ${description1 === 1 ? 'text-gray-400 bg-white' : ''} ${
+              description1 === 2 ? ' bg-green-500/30 border-green-500' : ''
+            }`"
             placeholder="შეიყვანეთ აღწერა"
           ></textarea>
           <ul class="text-gray-400 mt-1">
-            <li>მინიმუმ 2 სიმბოლო</li>
+            <li
+              :class="`${description1 === 0 ? ' text-red-500' : ''} ${
+                description1 === 1 ? 'text-gray-400 ' : ''
+              } ${description1 === 2 ? 'text-green-500 ' : ''}`"
+            >
+              მინიმუმ 2 სიმბოლო
+            </li>
           </ul>
         </div>
         <!-- Date and Categories -->
-        <div class="flex gap-2 mt-2 items-center justify-center">
+        <div class="flex gap-2 mt-2 items-center justify-between">
           <div>
             <label for="date" class="mt-2">გამოქვეყნების თარიღი <i>*</i></label>
             <div class="mt-1">
               <input
                 type="date"
                 placeholder="შეიყვანეთ ავტორი"
-                class="border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="`border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm ${
+                  !publishDate ? 'bg-red-500/30 border-red-500' : 'bg-green-500/30 border-green-500'
+                }`"
                 id="date"
                 name="date"
                 v-model="publishDate"
@@ -139,7 +196,11 @@
                 item-value="name"
                 multiple
                 clearable
-                class="w-72 rounded-lg h-12"
+                :class="`w-72 rounded-lg h-12 ${
+                  !selectedCategories
+                    ? 'bg-red-500/30 border-red-500'
+                    : 'bg-green-500/30 border-green-500'
+                }`"
                 variant="outlined"
                 :active="selectActive"
               >
@@ -174,17 +235,36 @@
               placeholder="Example@redberry.ge"
               id="mail"
               name="mail"
-              class="border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              :class="`border-2 w-72 border-solid p-2 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm ${
+                email1 === 0 ? ' bg-red-500/30 border-red-500' : ''
+              } ${email1 === 1 ? 'text-gray-400 bg-white' : ''} ${
+                email1 === 2 ? ' bg-green-500/30 border-green-500' : ''
+              }`"
               v-model="email"
             />
           </div>
         </div>
         <!-- Submit button -->
-        <button type="submit" class="bg-gray-200 rounded-lg py-2 px-10 mt-10 ml-[70%]">
+        <button
+          type="submit"
+          :class="` rounded-lg py-2 px-10 mt-10 ml-[70%] ${
+            title1 === 2 &&
+            author1 === 2 &&
+            author2 === 2 &&
+            author3 === 2 &&
+            description1 === 2 &&
+            publishDate &&
+            selectedCategories &&
+            email1 === 2
+              ? 'bg-violet-500 text-white'
+              : 'bg-gray-200 text-black'
+          }`"
+        >
           გამოქვეყნება
         </button>
       </form>
     </div>
+    <SuccessModal message="ჩანაწი წარმატებით დაემატა" />
   </div>
 </template>
 
@@ -193,6 +273,8 @@ import { RouterLink } from 'vue-router'
 import { ref, watch } from 'vue'
 import { useCategoriesStore } from '../stores/categories'
 import axios from 'axios'
+import { useSuccessStore } from '../stores/success'
+import SuccessModal from '../components/SuccessModal.vue'
 
 const selectedCategories = ref()
 const isUpdating = ref(false)
@@ -204,14 +286,84 @@ const publishDate = ref()
 const image = ref()
 const selectActive = ref(false)
 const email = ref()
-
-const titleRegexp = /^.{2,}$/
-const descriptionRegexp = /^.{2,}$/
-const authorRegexp = /^[ა-ჰ\s]{4,}(?:[.?!]\s*[ა-ჰ\s]{1,}){1,}$/
+const useSuccess = useSuccessStore()
 
 function onImageChange(e: any) {
   image.value = e.target.files[0]
 }
+
+// Regex
+const titleRegexp = /^.{2,}$/
+const descriptionRegexp = /^.{2,}$/
+const authorRegexp1 = /^[ა-ჰ\s]+$/
+const authorRegexp2 = /^[ა-ჰ\s]{4,}$/
+const authorRegexp3 = /^[ა-ჰ]{4,}.+[ა-ჰ]{4,}$/
+const emailRegexp = /(?:[a-zA-Z0-9._-]+)@redberry\.ge/
+
+// Tested
+const title1 = ref()
+const description1 = ref()
+const author1 = ref()
+const author2 = ref()
+const author3 = ref()
+const email1 = ref()
+
+// Watch
+watch(author, (val: any) => {
+  if (authorRegexp1.test(val)) {
+    author1.value = 2
+  } else if (author.value.length === 0) {
+    author1.value = 1
+  } else {
+    author1.value = 0
+  }
+
+  if (authorRegexp2.test(val)) {
+    author2.value = 2
+  } else if (author.value.length === 0) {
+    author2.value = 1
+  } else {
+    author2.value = 0
+  }
+
+  if (authorRegexp3.test(val)) {
+    author3.value = 2
+  } else if (author.value.length === 0) {
+    author3.value = 1
+  } else {
+    author3.value = 0
+  }
+})
+
+watch(title, (val: any) => {
+  if (titleRegexp.test(val)) {
+    title1.value = 2
+  } else if (title.value.length === 0) {
+    title1.value = 1
+  } else {
+    title1.value = 0
+  }
+})
+
+watch(description, (val: any) => {
+  if (descriptionRegexp.test(val)) {
+    description1.value = 2
+  } else if (title.value.length === 0) {
+    description1.value = 1
+  } else {
+    description1.value = 0
+  }
+})
+
+watch(email, (val: any) => {
+  if (emailRegexp.test(val)) {
+    email1.value = 2
+  } else if (email.value.length === 0) {
+    email1.value = 1
+  } else {
+    email1.value = 0
+  }
+})
 
 let timeout: number | any = -1
 watch(isUpdating, (val) => {
@@ -232,10 +384,14 @@ function handleSubmit() {
   formData.append('email', email.value)
   formData.append('categories', JSON.stringify(selectedCategories.value.map((el: any) => el.id)))
 
-  axios.post('/api/blogs', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
+  axios
+    .post('/api/blogs', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    .then((response: any) => {
+      useSuccess.setSuccess(true)
+    })
 }
 </script>

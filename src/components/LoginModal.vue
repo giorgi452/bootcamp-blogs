@@ -34,41 +34,17 @@
           <button class="rounded bg-violet-500 mt-5 w-full p-2 text-white font-bold">შესვლა</button>
         </form>
       </div>
-      <div class="py-10 px-16 flex flex-col items-center justify-center" v-else>
-        <svg
-          width="64"
-          height="64"
-          viewBox="0 0 64 64"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M32.0002 58.6667C46.6668 58.6667 58.6668 46.6667 58.6668 32C58.6668 17.3333 46.6668 5.33334 32.0002 5.33334C17.3335 5.33334 5.3335 17.3333 5.3335 32C5.3335 46.6667 17.3335 58.6667 32.0002 58.6667Z"
-            fill="#14D81C"
-          />
-          <path
-            d="M20.6665 32L28.2132 39.5467L43.3332 24.4533"
-            stroke="white"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <h1 class="text-2xl font-bold mt-2">წარმატებული ავტორიზაცია</h1>
-        <button
-          class="rounded bg-violet-500 w-96 p-2 text-white font-bold mt-10"
-          @click="dialog = false"
-        >
-          კარგი
-        </button>
-      </div>
     </v-card>
   </v-dialog>
+  <SuccessModal message="წარმატებული ავტორიზაცია" />
 </template>
 
 <script setup lang="ts">
+import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useSuccessStore } from '../stores/success'
+import SuccessModal from './SuccessModal.vue'
 
 const emailRegex = /(?:[a-zA-Z0-9._-]+)@redberry\.ge/
 
@@ -77,6 +53,9 @@ const success = ref(false)
 const email = ref('')
 const error = ref(false)
 const logged = ref(false)
+const router = useRouter()
+const route = useRoute()
+const useSuccess = useSuccessStore()
 
 watch(email, (val) => {
   const valid = emailRegex.test(val)
@@ -85,6 +64,15 @@ watch(email, (val) => {
     error.value = true
   } else {
     error.value = false
+  }
+
+  router.replace(`/?email=${email.value}`)
+})
+
+onMounted(() => {
+  email.value = String(route.query.email)
+  if (!route.query.email) {
+    email.value = ''
   }
 })
 
@@ -102,9 +90,8 @@ function handleSubmit() {
     )
     .then((response: any) => {
       logged.value = true
-      if (logged.value) {
-        dialog.value = false
-      }
+      useSuccess.setSuccess(true)
+      dialog.value = false
     })
     .catch((error: any) => {
       console.log(error.response.data.message)
