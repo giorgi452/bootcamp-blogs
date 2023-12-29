@@ -321,7 +321,7 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { onUpdated, ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useCategoriesStore } from '../stores/categories'
 import axios from 'axios'
 import { useSuccessStore } from '../stores/success'
@@ -341,8 +341,18 @@ const useSuccess = useSuccessStore()
 const uploaded = ref(false)
 
 function onImageChange(e: any) {
-  image.value = e.target.files[0]
+  const file = e.target.files[0]
   uploaded.value = true
+
+  const reader = new FileReader()
+
+  reader.readAsDataURL(file)
+
+  reader.onload = (event: any) => {
+    image.value = file
+
+    localStorage.setItem('image', event.target.result)
+  }
 }
 
 // Regex
@@ -386,6 +396,8 @@ watch(author, (val: any) => {
   } else {
     author3.value = 0
   }
+
+  localStorage.setItem('author', author.value)
 })
 
 watch(title, (val: any) => {
@@ -396,6 +408,8 @@ watch(title, (val: any) => {
   } else {
     title1.value = 0
   }
+
+  localStorage.setItem('title', title.value)
 })
 
 watch(description, (val: any) => {
@@ -406,6 +420,8 @@ watch(description, (val: any) => {
   } else {
     description1.value = 0
   }
+
+  localStorage.setItem('description', description.value)
 })
 
 watch(email, (val: any) => {
@@ -416,8 +432,17 @@ watch(email, (val: any) => {
   } else {
     email1.value = 0
   }
+
+  localStorage.setItem('email', email.value)
 })
 
+watch(publishDate, () => {
+  localStorage.setItem('publish_date', publishDate.value)
+})
+
+watch(selectedCategories, () => {
+  localStorage.setItem('categories', JSON.stringify(selectedCategories.value))
+})
 let timeout: number | any = -1
 watch(isUpdating, (val) => {
   clearTimeout(timeout)
@@ -448,7 +473,30 @@ function handleSubmit() {
     })
 }
 
-onUpdated(() => {
-  console.log(image.value)
+onMounted(() => {
+  email.value = String(localStorage.getItem('email'))
+  title.value = String(localStorage.getItem('title'))
+  image.value = localStorage.getItem('image')
+  author.value = String(localStorage.getItem('author'))
+  description.value = String(localStorage.getItem('description'))
+  publishDate.value = String(localStorage.getItem('publish_date'))
+  selectedCategories.value = Object(JSON.parse(localStorage.getItem('categories')))
+  if (
+    !localStorage.getItem('email') &&
+    !localStorage.getItem('title') &&
+    !localStorage.getItem('image') &&
+    !localStorage.getItem('author') &&
+    !localStorage.getItem('description') &&
+    !localStorage.getItem('publish_date') &&
+    !localStorage.getItem('categories')
+  ) {
+    email.value = ''
+    title.value = ''
+    image.value = undefined
+    author.value = ''
+    description.value = ''
+    publishDate.value = ''
+    selectedCategories.value = undefined
+  }
 })
 </script>
