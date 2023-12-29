@@ -37,6 +37,7 @@
           <label
             class="flex flex-col bg-violet-300/30 border border-dashed border-black items-center gap-10 justify-around px-56 py-16 mt-1 rounded-lg"
             for="image"
+            v-if="!uploaded"
           >
             <div class="flex-1">
               <svg
@@ -61,6 +62,56 @@
             <p class="font-normal">
               ჩააგდეთ ფაილი აქ ან <span class="font-bold underline">აირჩიეთ ფაილი</span>
             </p>
+          </label>
+          <label class="flex bg-gray-200 p-3 rounded-lg justify-between" for="image" v-else>
+            <div class="flex gap-1">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  opacity="0.4"
+                  d="M22 7.81V13.9L20.37 12.5C19.59 11.83 18.33 11.83 17.55 12.5L13.39 16.07C12.61 16.74 11.35 16.74 10.57 16.07L10.23 15.79C9.52 15.17 8.39 15.11 7.59 15.65L2.67 18.95L2.56 19.03C2.19 18.23 2 17.28 2 16.19V7.81C2 4.17 4.17 2 7.81 2H16.19C19.83 2 22 4.17 22 7.81Z"
+                  fill="#85858D"
+                />
+                <path
+                  d="M9.00012 10.38C10.3146 10.38 11.3801 9.31443 11.3801 8C11.3801 6.68556 10.3146 5.62 9.00012 5.62C7.68568 5.62 6.62012 6.68556 6.62012 8C6.62012 9.31443 7.68568 10.38 9.00012 10.38Z"
+                  fill="#85858D"
+                />
+                <path
+                  d="M21.9996 13.9001V16.1901C21.9996 19.8301 19.8296 22.0001 16.1896 22.0001H7.80957C5.25957 22.0001 3.41957 20.9301 2.55957 19.0301L2.66957 18.9501L7.58957 15.6501C8.38957 15.1101 9.51957 15.1701 10.2296 15.7901L10.5696 16.0701C11.3496 16.7401 12.6096 16.7401 13.3896 16.0701L17.5496 12.5001C18.3296 11.8301 19.5896 11.8301 20.3696 12.5001L21.9996 13.9001Z"
+                  fill="#85858D"
+                />
+              </svg>
+              <h4>{{ image?.name }}</h4>
+            </div>
+            <div class="font-bold">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.75781 16.2427L16.2431 7.75739"
+                  stroke="#1A1A1F"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M16.2431 16.2426L7.75781 7.75732"
+                  stroke="#1A1A1F"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
           </label>
         </div>
 
@@ -270,7 +321,7 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { ref, watch } from 'vue'
+import { onUpdated, ref, watch } from 'vue'
 import { useCategoriesStore } from '../stores/categories'
 import axios from 'axios'
 import { useSuccessStore } from '../stores/success'
@@ -287,9 +338,11 @@ const image = ref()
 const selectActive = ref(false)
 const email = ref()
 const useSuccess = useSuccessStore()
+const uploaded = ref(false)
 
 function onImageChange(e: any) {
   image.value = e.target.files[0]
+  uploaded.value = true
 }
 
 // Regex
@@ -394,4 +447,8 @@ function handleSubmit() {
       useSuccess.setSuccess(true)
     })
 }
+
+onUpdated(() => {
+  console.log(image.value)
+})
 </script>
