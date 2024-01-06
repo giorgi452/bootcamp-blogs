@@ -296,23 +296,25 @@
           </div>
         </div>
         <!-- Submit button -->
-        <button
-          type="submit"
-          :class="` rounded-lg py-2 px-10 mt-10 ml-[70%] ${
-            title1 === 2 &&
-            author1 === 2 &&
-            author2 === 2 &&
-            author3 === 2 &&
-            description1 === 2 &&
-            publishDate &&
-            selectedCategories &&
-            email1 === 2
-              ? 'bg-violet-500 text-white'
-              : 'bg-gray-200 text-black'
-          }`"
-        >
-          გამოქვეყნება
-        </button>
+        <div class="flex justify-end">
+          <button
+            type="submit"
+            :class="` rounded-lg py-2 px-10 mt-10  ${
+              title1 === 2 &&
+              author1 === 2 &&
+              author2 === 2 &&
+              author3 === 2 &&
+              description1 === 2 &&
+              publishDate &&
+              selectedCategories &&
+              email1 === 2
+                ? 'bg-violet-500 text-white'
+                : 'bg-gray-200 text-black'
+            }`"
+          >
+            გამოქვეყნება
+          </button>
+        </div>
       </form>
     </div>
     <SuccessModal message="ჩანაწი წარმატებით დაემატა" />
